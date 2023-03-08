@@ -14,8 +14,8 @@ namespace Backend
 
             // Add services to the container.
 
-            builder.Services.AddDbContext<DayContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DayContext")));
+            builder.Services.AddDbContext<OrderContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("OrderContext")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
