@@ -14,6 +14,11 @@ namespace Backend.Controllers
     public class ProgrammersController : ControllerBase
     {
         private readonly OrderContext _context;
+        public struct LoginData
+        {
+            public string login { get; set; }
+            public string password { get; set; }
+        }
 
         public ProgrammersController(OrderContext context)
         {
@@ -51,6 +56,7 @@ namespace Backend.Controllers
 
         // PUT: api/Programmers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProgrammer(int id, Programmer programmer)
         {
@@ -128,6 +134,52 @@ namespace Backend.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("Name")]
+        public async Task<IActionResult> GetProgrammerToken(int id)
+        {
+            if (_context.Programmers == null)
+            {
+                return NotFound();
+            }
+            var programmer = await _context.Programmers.FindAsync(id);
+            if (programmer == null)
+            {
+                return NotFound();
+            }
+
+            _context.Programmers.Remove(programmer);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+
+        [HttpPost]
+        public object GetToken([FromBody] LoginData ld)
+        {
+            var user = SharedData.Users.FirstOrDefault(u => u.Login == ld.login && u.Password == ld.password);
+            if (user == null)
+            {
+                Response.StatusCode = 401;
+                return new { message = "wrong login/password" };
+            }
+            return AuthOptions.GenerateToken(user.IsAdmin);
+        }
+
+        [HttpGet("token")]
+        public object GetToken()
+        {
+            return AuthOptions.GenerateToken();
+        }
+        [HttpGet("token/secret")]
+        public object GetAdminToken()
+        {
+            return AuthOptions.GenerateToken(true);
+        }
+
+
 
         private bool ProgrammerExists(int id)
         {
