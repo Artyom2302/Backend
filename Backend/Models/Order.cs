@@ -7,12 +7,12 @@
         public string Main_stack { get; set; }
         public string Secret_Info { get; set; }
         public Order() { this.Id = 0; this.Main_stack = " "; this.Name = "";this.Secret_Info = " "; }
-        public Order(int id, string name,string main_stack)
+        public Order(int id, string name,string main_stack,string secret_info)
         {
             this.Id = id;
             this.Name = name;
             this.Main_stack = main_stack;
-            this.Secret_Info = " ";
+            this.Secret_Info = secret_info;
         }
         
 

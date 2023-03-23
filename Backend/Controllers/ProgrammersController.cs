@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Backend.Controllers
 {
@@ -22,6 +24,7 @@ namespace Backend.Controllers
 
         // GET: api/Programmers
         [HttpGet]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<IEnumerable<Programmer>>> GetProgrammers()
         {
           if (_context.Programmers == null)
@@ -33,6 +36,7 @@ namespace Backend.Controllers
 
         // GET: api/Programmers/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<Programmer>> GetProgrammer(int id)
         {
           if (_context.Programmers == null)
@@ -53,6 +57,7 @@ namespace Backend.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutProgrammer(int id, Programmer programmer)
         {
             if (id != programmer.Order_Id)
@@ -84,6 +89,7 @@ namespace Backend.Controllers
         // POST: api/Programmers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Programmer>> PostProgrammer(Programmer programmer)
         {
           if (_context.Programmers == null)
@@ -112,6 +118,7 @@ namespace Backend.Controllers
 
         // DELETE: api/Programmers/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProgrammer(int id)
         {
             if (_context.Programmers == null)
