@@ -24,7 +24,7 @@ namespace Backend.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        [Authorize(Roles = "User")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
           if (_context.Orders == null)

@@ -89,7 +89,7 @@ namespace Backend.Controllers
         {
             if (_context.Users == null)
             {
-                return Problem("Entity set 'OrderContext.Users'  is null.");
+                return Problem("Entity set 'OrderContext.Users' is null.");
             }
             _context.Users.Add(user);
             try

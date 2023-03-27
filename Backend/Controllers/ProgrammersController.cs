@@ -35,56 +35,31 @@ namespace Backend.Controllers
         }
 
         // GET: api/Programmers/5
-        [HttpGet("{id}")]
+        [HttpGet("{surname}/{name}")]
         [Authorize(Roles = "User")]
-        public async Task<ActionResult<Programmer>> GetProgrammer(int id)
+        public async Task<ActionResult<Programmer>> GetProgrammer(string name,string surname)
         {
           if (_context.Programmers == null)
           {
               return NotFound();
           }
-            var programmer = await _context.Programmers.FindAsync(id);
+            var responce = _context.Programmers.Include(p => p.Orders).FirstOrDefault(p => p.Name == name && p.Surname == surname);  // добавляем данные по компаниям
+                                    
 
-            if (programmer == null)
+            if (responce == null)
             {
                 return NotFound();
             }
 
-            return programmer;
+            
+
+            return responce;
         }
 
         // PUT: api/Programmers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutProgrammer(int id, Programmer programmer)
-        {
-            if (id != programmer.Order_Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(programmer).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProgrammerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+       
 
         // POST: api/Programmers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -118,7 +93,7 @@ namespace Backend.Controllers
 
         // DELETE: api/Programmers/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> DeleteProgrammer(int id)
         {
             if (_context.Programmers == null)

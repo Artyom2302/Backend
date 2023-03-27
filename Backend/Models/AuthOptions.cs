@@ -17,7 +17,7 @@ namespace Backend.Models
             var now = DateTime.UtcNow;
             var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, "user"),
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, "User"),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, is_admin?"Admin":"User")
                 };
             ClaimsIdentity identity =
