@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
 
 namespace Backend.Controllers
 {
@@ -16,7 +15,7 @@ namespace Backend.Controllers
     public class ProgrammersController : ControllerBase
     {
         private readonly OrderContext _context;
-       
+
         public ProgrammersController(OrderContext context)
         {
             _context = context;
@@ -24,7 +23,6 @@ namespace Backend.Controllers
 
         // GET: api/Programmers
         [HttpGet]
-        [Authorize(Roles = "User")]
         public async Task<ActionResult<IEnumerable<Programmer>>> GetProgrammers()
         {
           if (_context.Programmers == null)
@@ -34,53 +32,87 @@ namespace Backend.Controllers
             return await _context.Programmers.ToListAsync();
         }
 
+
+        
+
         // GET: api/Programmers/5
-        [HttpGet("{surname}/{name}")]
-        [Authorize(Roles = "User")]
-        public async Task<ActionResult<Programmer>> GetProgrammer(string name,string surname)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Programmer>> GetProgrammer(int id)
         {
           if (_context.Programmers == null)
           {
               return NotFound();
           }
-            var responce = _context.Programmers.Include(p => p.Orders).FirstOrDefault(p => p.Name == name && p.Surname == surname);  // добавляем данные по компаниям
-                                    
+            var programmer = await _context.Programmers.FindAsync(id);
+
+            if (programmer == null)
+            {
+                return NotFound();
+            }
+
+            return programmer;
+        }
+
+
+        [HttpGet]
+        [Route("GetProgByName")]
+        [Authorize]
+        public async Task<ActionResult<Programmer>> GetProgrammerBy(string surname, string name)
+        {
+            if (_context.Programmers == null)
+            {
+                return NotFound();
+            }
+            var responce = _context.Programmers.Include(p => p.Orders).FirstOrDefault(p => p.Name == name && p.Surname == surname);
 
             if (responce == null)
             {
                 return NotFound();
             }
 
-            
+            return responce;
+        }
+
+        [HttpGet]
+        [Route("GetProgByStack")]
+    
+        public async Task<ActionResult<Programmer>> GetProgrammerByStack(string main_stack)
+        {
+            if (_context.Programmers == null)
+            {
+                return NotFound();
+            }
+            var responce = _context.Programmers.Include(p => p.Orders).FirstOrDefault(p => p.Main_stack == main_stack);
+
+            if (responce == null)
+            {
+                return NotFound();
+            }
 
             return responce;
         }
 
         // PUT: api/Programmers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-
-       
-
-        // POST: api/Programmers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Programmer>> PostProgrammer(Programmer programmer)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProgrammer(int id, Programmer programmer)
         {
-          if (_context.Programmers == null)
-          {
-              return Problem("Entity set 'OrderContext.Programmers'  is null.");
-          }
-            _context.Programmers.Add(programmer);
+            if (id != programmer.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(programmer).State = EntityState.Modified;
+
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateConcurrencyException)
             {
-                if (ProgrammerExists(programmer.Order_Id))
+                if (!ProgrammerExists(id))
                 {
-                    return Conflict();
+                    return NotFound();
                 }
                 else
                 {
@@ -88,19 +120,33 @@ namespace Backend.Controllers
                 }
             }
 
-            return CreatedAtAction("GetProgrammer", new { id = programmer.Order_Id }, programmer);
+            return NoContent();
+        }
+
+        // POST: api/Programmers
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Programmer>> PostProgrammer(Programmer programmer)
+        {
+          if (_context.Programmers == null)
+          {
+              return Problem("Entity set 'OrderContext.Programmers'  is null.");
+          }
+            _context.Programmers.Add(programmer);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetProgrammer", new { id = programmer.Id }, programmer);
         }
 
         // DELETE: api/Programmers/5
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteProgrammer(int id)
         {
             if (_context.Programmers == null)
             {
                 return NotFound();
             }
-            var programmer = await _context.Programmers.FindAsync(id);
+            var programmer = _context.Programmers.Include(p=> p.Orders).FirstOrDefault(p=> p.Id==id);
             if (programmer == null)
             {
                 return NotFound();
@@ -111,37 +157,10 @@ namespace Backend.Controllers
 
             return NoContent();
         }
-
-        [HttpGet("Name")]
-        public async Task<IActionResult> GetProgrammerToken(int id)
-        {
-            if (_context.Programmers == null)
-            {
-                return NotFound();
-            }
-            var programmer = await _context.Programmers.FindAsync(id);
-            if (programmer == null)
-            {
-                return NotFound();
-            }
-
-            _context.Programmers.Remove(programmer);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-
-
-       
-
-  
-
-
 
         private bool ProgrammerExists(int id)
         {
-            return (_context.Programmers?.Any(e => e.Order_Id == id)).GetValueOrDefault();
+            return (_context.Programmers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

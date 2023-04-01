@@ -14,8 +14,7 @@ namespace Backend.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Order>().HasKey(o => new {o.Id});
-            modelBuilder.Entity<Programmer>().HasKey(p => new { p.Order_Id, p.Surname,p.Name });
+            modelBuilder.Entity<Order>().HasKey(o => new { o.Id });
             modelBuilder.Entity<User>().HasKey(u => new { u.Login });
         }
 
