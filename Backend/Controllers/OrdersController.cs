@@ -24,7 +24,7 @@ namespace Backend.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        [Authorize]
+     
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
           if (_context.Orders == null)
@@ -36,7 +36,7 @@ namespace Backend.Controllers
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "User")]
+        
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
           if (_context.Orders == null)
@@ -53,10 +53,47 @@ namespace Backend.Controllers
             return order;
         }
 
+
+        [HttpGet()]
+        [Route("GetOrderByName")]
+
+        public async Task<ActionResult<Order>> GetOrderByName(String Name)
+        {
+            if (_context.Orders == null)
+            {
+                return NotFound();
+            }
+            var responce = _context.Orders.FirstOrDefault(o => o.Name == Name);
+
+            if (responce == null)
+            {
+                return NotFound();
+            }
+            return responce;
+        }
+
+        [HttpGet()]
+        [Route("GetProgByStack")]
+        public async Task<ActionResult<Order>> GetOrderByStack(String Stack)
+        {
+            if (_context.Orders == null)
+            {
+                return NotFound();
+            }
+            var responce = _context.Orders.FirstOrDefault(o => o.Main_stack == Stack);
+
+            if (responce == null)
+            {
+                return NotFound();
+            }
+
+            return responce;
+        }
+
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+      
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -88,8 +125,8 @@ namespace Backend.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Order>> PostOrder([FromForm] Order order)
+        
+        public async Task<ActionResult<Order>> PostOrder( Order order)
         {
           if (_context.Orders == null)
           {
@@ -104,7 +141,7 @@ namespace Backend.Controllers
         // DELETE: api/Orders/5
         
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        
         public async Task<IActionResult> DeleteOrder(int id)
         {
             if (_context.Orders == null)

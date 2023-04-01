@@ -7,7 +7,6 @@ namespace Backend.Models
         public OrderContext(DbContextOptions<OrderContext> options)
           : base(options)
         {
-           
             Database.EnsureCreated();
         }
 

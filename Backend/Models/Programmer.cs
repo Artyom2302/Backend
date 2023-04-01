@@ -14,7 +14,6 @@
         this.Name = string.Empty;  
         this.Surname = string.Empty; 
         this.Main_stack = string.Empty;
-       
         this.Orders = new List<Order>();
         }
         public Programmer(int id,string name,string surname,string main_stack,int Order_Id,List<Order> orders)
@@ -24,6 +23,13 @@
            this.Surname = surname;
            this.Main_stack = main_stack;
            this.Orders = orders;
+        }
+        public void AddOrder(Order order)
+        {
+            if (!Orders.Contains(order)&& order.Main_stack==Main_stack)
+            {
+                Orders.Add(order);
+            }
         }
         
 
