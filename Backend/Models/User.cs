@@ -20,11 +20,11 @@ namespace Backend.Models
             this.IsAdmin = isAdmin;
         }
 
-        //public User(Auth_User user)
-        //{
-        //    this.Login = user.Login;
-        //    this.Password = user.Password;
-        //    this.IsAdmin = false;
-        //}
+        public User(Auth_User user)
+        {
+            this.Login = user.Login;
+            this.Password = user.Password;
+            this.IsAdmin = false;
+        }
     }
 }

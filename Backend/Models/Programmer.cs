@@ -31,7 +31,15 @@
                 Orders.Add(order);
             }
         }
-        
+        public void DeleteOrder(Order order)
+        {
+            if (Orders.Contains(order))
+            {
+                Orders.Remove(order);
+            }
+        }
+
+
 
     }
 }

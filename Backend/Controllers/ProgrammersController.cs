@@ -24,6 +24,7 @@ namespace Backend.Controllers
 
         // GET: api/Programmers
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Programmer>>> GetProgrammers()
         {
             if (_context.Programmers == null)
@@ -35,6 +36,7 @@ namespace Backend.Controllers
 
         // GET: api/Programmers/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Programmer>> GetProgrammer(int id)
         {
             if (_context.Programmers == null)
@@ -54,7 +56,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("GetProgByName")]
-
+        [Authorize]
         public async Task<ActionResult<Programmer>> GetProgrammerBySurName(string surname, string name)
         {
             if (_context.Programmers == null)
@@ -73,7 +75,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("GetProgsByStack")]
-
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProgrammerDTO>>> GetProgrammersByMainStack(string main_stack)
         {
             if (_context.Programmers == null)
@@ -96,6 +98,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("GetProgByOrderName")]
+        [Authorize]
         public ActionResult<ProgrammerDTO> GetProgrammerByOrdername(string ordername)
         {
             if (_context.Programmers == null)
@@ -120,6 +123,7 @@ namespace Backend.Controllers
         // PUT: api/Programmers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutProgrammer(int id, Programmer programmer)
         {
             if (id != programmer.Id)
@@ -150,6 +154,7 @@ namespace Backend.Controllers
 
         [HttpPut()]
         [Route("AddOrder")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddOrder(int prog_id, int order_id)
         {
             if (!ProgrammerExists(prog_id)|| !(_context.Orders?.Any(e => e.Id == order_id)).GetValueOrDefault())
@@ -174,10 +179,40 @@ namespace Backend.Controllers
             return NoContent();
         }
 
+        [HttpPut()]
+        [Route("DeleteOrder")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteOrder(int prog_id, int order_id)
+        {
+            if (!ProgrammerExists(prog_id) || !(_context.Orders?.Any(e => e.Id == order_id)).GetValueOrDefault())
+            {
+                return NotFound();
+            }
+            var prog=_context.Programmers.FirstOrDefault(p=>p.Id==prog_id);
+
+            var order = _context.Orders.FirstOrDefault(o => o.Id == order_id);
+            if (prog.Orders.Contains(order))
+            {
+                prog.DeleteOrder(order);
+                _context.Entry(prog).State = EntityState.Modified;
+                _context.SaveChanges();
+
+            }
+            else
+            {
+                return NotFound();
+            }
+
+           
+            return NoContent();
+        }
+
+
 
         // POST: api/Programmers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Programmer>> PostProgrammer(Programmer programmer)
         {
           if (_context.Programmers == null)
@@ -192,6 +227,7 @@ namespace Backend.Controllers
 
         // DELETE: api/Programmers/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProgrammer(int id)
         {
             if (_context.Programmers == null)
