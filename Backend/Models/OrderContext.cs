@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Backend.Models;
+using System.Diagnostics.Metrics;
 
 namespace Backend.Models
 {
@@ -7,18 +9,19 @@ namespace Backend.Models
         public OrderContext(DbContextOptions<OrderContext> options)
           : base(options)
         {
-            Database.EnsureCreated();
+           Database.EnsureCreated();
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Order>().HasKey(o => new { o.Id });
-            modelBuilder.Entity<User>().HasKey(u => new { u.Login });
+     
+            
         }
-
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Programmer> Programmers { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<Lab> Labs{ get; set; }
+        public DbSet<Programmer> Programmers{get; set; }
+        public DbSet<User> Users{get; set; }
+        public DbSet<Review> Reviews{ get; set; }
+        public DbSet<StackNames> StackNames{ get; set; }
+                                                                                      
     }
 }

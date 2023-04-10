@@ -1,6 +1,4 @@
-
-
-using Backend.Controllers;
+//using Backend.Controllers;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-
+using System.Text.Json.Serialization;
 
 namespace Backend
 {
@@ -28,6 +26,8 @@ namespace Backend
 
             builder.Services.AddDbContext<OrderContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("OrderContext")));
+
+           
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

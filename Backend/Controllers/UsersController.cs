@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Models.DTO;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -22,41 +21,47 @@ namespace Backend.Controllers
             _context = context;
         }
 
+        // GET: api/Users
         [HttpGet]
-        [Route("All")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             if (_context.Users == null)
             {
                 return NotFound();
             }
-            return await _context.Users.ToListAsync();
+
+            List<UserDTO> DTOs = new List<UserDTO>();
+            foreach (var user in _context.Users)
+            {
+                DTOs.Add(new UserDTO(user));
+            }
+            return DTOs;
         }
 
-        // GET: api/Users1/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string login)
+        public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
             if (_context.Users == null)
             {
                 return NotFound();
             }
-            var user = await _context.Users.FindAsync(login);
+            var user = await _context.Users.FindAsync(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            return user;
+            return new UserDTO(user);
         }
 
-        // PUT: api/Users1/5
+        // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User user)
+        public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.Login)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
@@ -82,38 +87,48 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        // POST: api/Users1
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            if (_context.Users == null)
-            {
-                return Problem("Entity set 'OrderContext.Users' is null.");
-            }
-            _context.Users.Add(user);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UserExists(user.Login))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return CreatedAtAction("GetUser", new { id = user.Login }, user);
+        [HttpPut]
+        [Route("PutUserLab")]
+        public async Task<IActionResult> PutUserLab(int id,LabDTO labDTO)
+        {
+            var user = _context.Users.Find(id);
+            if (user==null)
+            {
+                return BadRequest();
+            }
+            if (_context.Labs.Where(l => l.Name == labDTO.Name).FirstOrDefault() != null)
+            {
+                return BadRequest("Already exists");
+            }
+            var lab=new Lab(labDTO);
+            lab.user= user; 
+            if (!user.AddLab(lab)){
+                return BadRequest("Can't add");
+            };
+            _context.SaveChanges();            
+            return NoContent();
         }
 
-        // DELETE: api/Users1/5
+
+        // POST: api/Users
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<User>> PostUser(UserDTO userDTO)
+        {
+          if (_context.Users == null)
+          {
+              return Problem("Entity set 'OrderContext.Users'  is null.");
+          }
+            var user = new User(userDTO);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+        }
+
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.Users == null)
             {
@@ -131,29 +146,9 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-       
-
-        [HttpGet]
-        public object GetToken([FromQuery]Auth_User user)
+        private bool UserExists(int id)
         {
-
-            var user_responce = _context.Users
-                    .Where(l => l.Login == user.Login && l.Password==user.Password)
-                    .FirstOrDefault();
-            if (user_responce == null)
-            {
-                Response.StatusCode = 401;
-                return new { message = "wrong login/password" };
-            }
-            return AuthOptions.GenerateToken(user_responce.IsAdmin);
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-
-        private bool UserExists(string id)
-        {
-            return (_context.Users?.Any(e => e.Login == id)).GetValueOrDefault();
-        }
-
-
-
     }
 }

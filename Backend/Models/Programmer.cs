@@ -6,38 +6,52 @@
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Main_stack { get; set; }
-        public List<Order> Orders { get; set; } 
+        public List<Lab> Labs { get; set; }
+        public double score { 
+            get {
+                double avg_score=0;
+                foreach (Lab lab in Labs)
+                {
+                    if (lab.Review != null)
+                    {
+                        avg_score+=lab.Review.Score;
+                    }
+                }
+                return avg_score;
+            }
+             }
 
-
-    public Programmer() {
-            this.Id = 0; 
+ 
+        public Programmer() {
+        this.Id = 0; 
         this.Name = string.Empty;  
         this.Surname = string.Empty; 
-        this.Main_stack = string.Empty;
-        this.Orders = new List<Order>();
+        this.Main_stack =string.Empty;
+        this.Labs = new List<Lab>();
+       
         }
-        public Programmer(int id,string name,string surname,string main_stack,int Order_Id,List<Order> orders)
+
+        public bool AddLab(Lab lab)
         {
-           this.Id = id;
-           this.Name = name;    
-           this.Surname = surname;
-           this.Main_stack = main_stack;
-           this.Orders = orders;
-        }
-        public void AddOrder(Order order)
-        {
-            if (!Orders.Contains(order)&& order.Main_stack==Main_stack)
+            if (lab != null && !Labs.Contains(lab) && lab.Main_stack==Main_stack)
             {
-                Orders.Add(order);
+                Labs.Add(lab);
+                return true;
             }
+            return false;
         }
-        public void DeleteOrder(Order order)
+
+        public bool DeleteLab(Lab lab)
         {
-            if (Orders.Contains(order))
+            if (lab != null && Labs.Contains(lab))
             {
-                Orders.Remove(order);
+                Labs.Add(lab);
+                return true;
             }
+            return false;
         }
+
+
 
 
 
