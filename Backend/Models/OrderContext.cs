@@ -21,6 +21,11 @@ namespace Backend.Models
                 .WithOne()
                 .HasForeignKey(l => l.ProgrammerId)
                 .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<User>()
+                .HasMany(p => p.Labs)
+                .WithOne()
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<StackName>().HasAlternateKey(s => s.Name);
         }
         public DbSet<Lab> Labs{ get; set; }
