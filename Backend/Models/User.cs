@@ -8,11 +8,11 @@ namespace Backend.Models
         public string Login { get; set; }
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
-       public List<Lab>? Labs { get; set; }
+       public List<Lab> Labs { get; set; }=new List<Lab>();
         public User() {
             this.Login = " ";
             this.Password = " ";
-            this.Labs = null;
+            this.Labs = new List<Lab>();
            
         }
 
@@ -22,8 +22,8 @@ namespace Backend.Models
             this.Login = user.Login;
             this.Password = user.Password;
             this.IsAdmin = false;
-            this.Labs = null;
-         
+            this.Labs = new List<Lab>();
+
         }
         public User(UserDTO user)
         {
@@ -31,7 +31,7 @@ namespace Backend.Models
             this.Login = user.Login;
             this.Password = user.Password;
             this.IsAdmin = user.IsAdmin;
-            this.Labs = null;
+            this.Labs = new List<Lab>();
         }
 
         public bool AddLab(Lab lab)
@@ -48,7 +48,7 @@ namespace Backend.Models
         {
             if (lab != null && Labs.Contains(lab))
             {
-                Labs.Add(lab);
+                Labs.Remove(lab);
                 return true;
             }
             return false;

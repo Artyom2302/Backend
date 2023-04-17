@@ -1,13 +1,18 @@
-﻿namespace Backend.Models
+﻿using Backend.Models.DTO;
+
+namespace Backend.Models
 {
     public class StackNames
     {
-        public int Id { get; set; } 
-        public string Name { get; set; }=string.Empty;
-        public List<StackName>? DifferentNames { get; set; }
+        private string name = string.Empty;
 
-        public bool AddDiffNames(StackName stack) {
-            if (stack != null && (DifferentNames!=null) && !DifferentNames.Contains(stack))
+        public int Id { get; set; }
+        public string Namestack { get; set; }
+        public List<StackName> DifferentNames { get; set; }=new List<StackName>();
+
+        public bool AddDiffNames(StackName stack)
+        {
+            if (stack != null && !DifferentNames.Contains(stack))
             {
                 DifferentNames.Add(stack);
                 return true;
@@ -23,5 +28,15 @@
             }
             return false;
         }
+        public StackNames()
+        {
+            
+        }
+        public StackNames(string name)
+        {
+            this.Namestack = name;
+            this.DifferentNames=new List<StackName>();
+        }
+
     }
 }

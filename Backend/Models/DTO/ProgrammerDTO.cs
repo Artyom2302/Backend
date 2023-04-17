@@ -9,6 +9,14 @@
         public ProgrammerDTO()
         {
 
-        }    
+        }
+        public ProgrammerDTO(Programmer item)
+        {
+            this.Id =item.Id;
+            this.Name = item.Name;
+            this.Surname = item.Surname;
+            this.Main_stack = item.Main_stack;
+          
+        }
     }
 }

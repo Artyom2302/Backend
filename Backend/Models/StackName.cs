@@ -18,5 +18,9 @@ namespace Backend.Models
         public StackName()
         {
         }
+        public StackName(string name)
+        {
+            this.Name = name;
+        }
     }
 }

@@ -10,8 +10,8 @@ namespace Backend.Models
         public string Main_stack { get; set; }
         public DateTime Date { get; set; }
         public bool IsDone { get; set; }
-
-        public User? user { get; set; }
+        public int? UserId { get; set; }
+        public int? ProgrammerId { get; set; }
         public Review? Review
         {
             get; set;
@@ -25,7 +25,15 @@ namespace Backend.Models
             this.Date = dto.Date;
             this.IsDone = dto.IsDone;
             this.Review = null;
-            this.user = null;
+        }
+        public Lab(LabDTOAdd dto)
+        {
+
+            this.Name = dto.Name;
+            this.Main_stack = dto.Main_stack;
+            this.Date = DateTime.Now;
+            this.IsDone = false;
+            this.Review = null;
         }
 
         public bool AddReview(Review review)
