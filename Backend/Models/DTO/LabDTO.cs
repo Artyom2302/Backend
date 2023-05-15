@@ -10,6 +10,8 @@
         public DateTime Date { get; set; }
         public bool IsDone { get; set; }
 
+        public  Review Review{ get; set; } = new Review();
+
         public LabDTO(Lab lab)
         {
             Id = lab.Id;
@@ -17,6 +19,10 @@
             Main_stack = lab.Main_stack;
             Date = lab.Date;
             IsDone = lab.IsDone;
+            if (lab.Review!=null)
+            {
+                Review = lab.Review;
+            }
 
         }
         public LabDTO()

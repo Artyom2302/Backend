@@ -60,11 +60,31 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Route("ShowLabByName")]
+        //  [Authorize]
+        public async Task<ActionResult<LabDTO>> GetLabByName(string name)
+        {
+            if (_context.Labs == null)
+            {
+                return NotFound();
+            }
+            var lab = _context.Labs.Where(s => s.Name == name).FirstOrDefault();
+            if (lab == null)
+            {
+                return NotFound();
+            }
+            LabDTO dTO = new LabDTO(lab);
+            return dTO;
+        }
+
+
+
+        [HttpGet]
         [Route("ShowLabByMainStack")]
       //  [Authorize]
         public async Task<ActionResult<List<LabDTO>>> GetLabsByMainStack(string mainstack)
         {
-            if (_context.Users == null)
+            if (_context.Labs == null)
             {
                 return NotFound();
             }
@@ -159,7 +179,7 @@ namespace Backend.Controllers
         [HttpPut]
         [Route("PutLabReview")]
         //[Authorize]
-        public async Task<IActionResult> PutLabReview(int id ,Review review)
+        public async Task<IActionResult> PutLabReview(int id ,ReviewDTO review)
         {
             var lab = _context.Labs.Find(id);
             if (lab == null)
@@ -174,6 +194,41 @@ namespace Backend.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+
+
+        [HttpPut]
+        [Route("ChangeLabState")]
+        //[Authorize]
+        public async Task<IActionResult> ChangeLabState(int id)
+        {
+            var lab = _context.Labs.Find(id);
+            if (lab == null)
+            {
+                return BadRequest();
+            }
+            lab.IsDone = !lab.IsDone;
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("DeleteLabReview")]
+        //[Authorize]
+        public async Task<IActionResult> DeleteLabReview(int id)
+        {
+            var lab = _context.Labs.Include(l => l.Review).Where(l=>l.Id==id).FirstOrDefault() ;
+            if (lab == null)
+            {
+                return BadRequest();
+            }
+
+            lab.DeleteReview();
+
+
+            _context.SaveChanges();
+            return NoContent();
+        }
+
 
         // POST: api/Labs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

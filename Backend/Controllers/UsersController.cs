@@ -26,7 +26,7 @@ namespace Backend.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             if (_context.Users == null)
@@ -44,7 +44,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("ShowLabs")]
-        [Authorize]
+       // [Authorize]
         public async Task<ActionResult<IEnumerable<LabDTO>>> GetLabs(int id)
         {
             if (_context.Users == null)
@@ -52,7 +52,7 @@ namespace Backend.Controllers
                 return NotFound();
             }
 
-            var user=_context.Users.Include(u=>u.Labs).Where(u => u.Id==id).FirstOrDefault();
+            var user=_context.Users.Include(u=>u.Labs).ThenInclude(l=>l.Review).Where(u => u.Id==id).FirstOrDefault();
             if (user == null) { 
                 return NotFound();
             }
@@ -67,7 +67,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("ShowUserByLogin")]
-        [Authorize]
+       // [Authorize]
         public async Task<ActionResult<UserDTO>> GetUserByLogin(string login)
         {
             if (_context.Users == null)
@@ -85,7 +85,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("ShowUserByRole")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<UserDTO>> GetUserByAdmin(bool isAdmin)
         {
             if (_context.Users == null)
@@ -104,7 +104,7 @@ namespace Backend.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        [Authorize]
+       // [Authorize]
         public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
             if (_context.Users == null)
@@ -139,7 +139,7 @@ namespace Backend.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
@@ -171,7 +171,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Route("PutUserLab")]
-        [Authorize]
+       // [Authorize]
         public async Task<IActionResult> PutUserLab(int id,LabDTOAdd labDTO)
         {
             var user = _context.Users.Find(id);
@@ -196,7 +196,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Route("ChangeUserRole")]
-        [Authorize(Roles = "Admin")]
+       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangeUserRole(int id)
         {
             var user = _context.Users.Find(id);
@@ -216,8 +216,7 @@ namespace Backend.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-
-        public async Task<ActionResult<User>> PostUser(UserDTO userDTO)
+        public async Task<ActionResult<User>> PostUser(Auth_User userDTO)
         {
           if (_context.Users == null)
           {
@@ -231,7 +230,7 @@ namespace Backend.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.Users == null)

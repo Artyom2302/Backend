@@ -36,24 +36,21 @@ namespace Backend.Models
             this.Review = null;
         }
 
-        public bool AddReview(Review review)
+        public bool AddReview(ReviewDTO reviewDTO)
         {
-            if (review != null && Review==null)
+            if (reviewDTO != null && Review==null)
             {
-               Review = review;
+               Review = new Review(reviewDTO);
                 return true;
             }
             return false;
         }
 
-        public bool DeleteReview(Review review)
+        public bool DeleteReview()
         {
-            if (review != null && Review != null && Review==review)
-            {
+  
                 Review = null;
                 return true;
-            }
-            return false;
         }
 
 
