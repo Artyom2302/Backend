@@ -61,7 +61,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("ShowLabByName")]
-        //  [Authorize]
+        //[Authorize]
         public async Task<ActionResult<LabDTO>> GetLabByName(string name)
         {
             if (_context.Labs == null)
@@ -146,7 +146,7 @@ namespace Backend.Controllers
         // PUT: api/Labs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-     //  [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> PutLab(int id, Lab lab)
         {
             if (id != lab.Id)
@@ -178,7 +178,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Route("PutLabReview")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> PutLabReview(int id ,ReviewDTO review)
         {
             var lab = _context.Labs.Find(id);
@@ -198,7 +198,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Route("ChangeLabState")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> ChangeLabState(int id)
         {
             var lab = _context.Labs.Find(id);
@@ -213,7 +213,7 @@ namespace Backend.Controllers
 
         [HttpDelete]
         [Route("DeleteLabReview")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> DeleteLabReview(int id)
         {
             var lab = _context.Labs.Include(l => l.Review).Where(l=>l.Id==id).FirstOrDefault() ;
@@ -233,7 +233,7 @@ namespace Backend.Controllers
         // POST: api/Labs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-       // [Authorize]
+        [Authorize]
         public async Task<ActionResult<Lab>> PostLab(LabDTOAdd dTO)
         {
           if (_context.Labs == null)
@@ -252,7 +252,7 @@ namespace Backend.Controllers
 
         // DELETE: api/Labs/5
         [HttpDelete("{id}")]
-       // [Authorize]
+        [Authorize]
         public async Task<IActionResult> DeleteLab(int id)
         {
             if (_context.Labs == null)

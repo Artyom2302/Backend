@@ -44,7 +44,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("ShowLabs")]
-       // [Authorize]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<LabDTO>>> GetLabs(int id)
         {
             if (_context.Users == null)
@@ -121,20 +121,27 @@ namespace Backend.Controllers
             return new UserDTO(user);
         }
 
+      
         [HttpGet()]
-        [Route("GetToken")]
-        public object GetToken()
+        [Route("Authorise")]
+        //[Authorize]
+        public async Task<ActionResult<Token>> Authorise(string login, string password)
         {
-            return AuthOptions.GenerateToken();
-        }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var user = _context.Users.Where(u => u.Login == login && u.Password == password).FirstOrDefault();
 
-        [HttpGet()]
-        [Route("GetAdminToken")]
-        public object GetAdminToken()
-        {
-            return AuthOptions.GenerateToken(true);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            Token token= new Token();
+            token.Id = user.Id;
+            token.token = AuthOptions.GenerateToken(user.IsAdmin);
+            return token; 
         }
-
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -171,7 +178,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Route("PutUserLab")]
-       // [Authorize]
+        [Authorize]
         public async Task<IActionResult> PutUserLab(int id,LabDTOAdd labDTO)
         {
             var user = _context.Users.Find(id);
@@ -222,10 +229,16 @@ namespace Backend.Controllers
           {
               return Problem("Entity set 'OrderContext.Users'  is null.");
           }
-            var user = new User(userDTO);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+
+          var userExist=_context.Users.Where(u=>u.Login == userDTO.Login).FirstOrDefault();
+            if (userExist == null)
+            {
+                var user = new User(userDTO);
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            }
+            return NotFound();
         }
 
         // DELETE: api/Users/5
